@@ -7,7 +7,8 @@ import sqlite3
 import pandas as pd
 
 #Creating RootWindow----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-tela_cadastro = Tk()
+# tela_cadastro = Tk()
+tela_cadastro = Toplevel()
 tela_cadastro.geometry("1000x626+650+250")
 tela_cadastro.title("Novo cadastro")
 tela_cadastro.resizable(False, False)
@@ -145,24 +146,31 @@ telefone2_entry.place(x = 600, y = 435)
 
 #defining the buttons funtions----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+#adicionando colaboradores---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def adicionar_colaboradores():
-    #Abrindo janela para escolher arquivo
-    getting_excelfile = filedialog.askopenfilename(parent=tela_cadastro, initialdir="/",title='Selecione a planilha de colaboradores')
-    #reading Excel
-    read_excel = pd.read_excel(getting_excelfile)
-    #geting the "Nome" column
-    nomes_funcionarios = read_excel["Nome"].values.tolist()
-    #geting the "Cod" column
-    cod_funcionarios = read_excel["Cod"].values.tolist()
-    #geting the "Cesta" column
-    cesta_funcionarios = read_excel["Cesta"].values.tolist()
+    nome_empresa_get = nome_empresa_str.get()
 
-    print(nomes_funcionarios, cod_funcionarios, cesta_funcionarios)
+    if nome_empresa_get == '':
+        messagebox.showerror("Ops !" , 'Prencha todos os dados obrigatorios !' ,parent = adicionar_colaboradores)
+    else:
+        #Abrindo janela para escolher arquivo
+        getting_excelfile = filedialog.askopenfilename(parent=tela_cadastro, initialdir="/",title='Selecione a planilha de colaboradores')
+        # #reading Excel
+        read_excel = pd.read_excel(getting_excelfile)
+
+        c.execute('''CREATE TABLE {}(nome, cod ,cesta)'''.format(nome_empresa_get))
+        conn.commit()
+
+        for index, row in read_excel.iterrows():
+            insert_table = '''INSERT INTO {}(nome, cod, cesta) VALUES(?,?,?)'''.format(nome_empresa_get)
+            c.execute(insert_table, (row[0], row[1], row[2]),)
+            conn.commit()
+        messagebox.showinfo("Sucesso !" , "Colaboradores importados com sucesso !", parent = tela_cadastro)
 
 
-
+#Salvando cadastro---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def salvar_cadastro():
-
     #getting the data grom the cadastro form
     nome_empresa_get = nome_empresa_str.get()
     cnpj_get = cnpj_str.get()
@@ -179,10 +187,8 @@ def salvar_cadastro():
     telefone1_get = telefone1_str.get()
     telefone2_get = telefone2_str.get()
 
-    #inserting into the database
-    cadastro_sql = "INSERT INTO cadastro (nomeempresa, nfuncionarios, cnpj,diasparado, vendedor,endereco,cidade , bairro, complemento, contato, telefone,telefonedois, obs) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)"
-    c.execute(cadastro_sql, (nome_empresa_get, numero_funcionarios_get , cnpj_get, quantidade_dias_get, vendedor_get,endereco_get,cidade_endereco_get, bairro_endereco_get,complemento_get, contato_get, telefone1_get, telefone2_get, observacao_get)  )
-    conn.commit()
+
+
     if nome_empresa_get == '' or numero_funcionarios_get == '':
         messagebox.showerror("Ops !" , "Prencha todos os dados obrigatorios !", parent = save_button)
     elif quantidade_dias_get == '' or vendedor_get == '':
@@ -192,17 +198,24 @@ def salvar_cadastro():
     elif  bairro_endereco_get == '' and contato_get == '':
         messagebox.showerror("Ops !" , "Prencha todos os dados obrigatorios !", parent = save_button)
     else:
+        #inserting into the database
+        cadastro_sql = "INSERT INTO cadastro (nomeempresa, nfuncionarios, cnpj,diasparado, vendedor,endereco,cidade , bairro, complemento, contato, telefone,telefonedois, obs) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        c.execute(cadastro_sql, (nome_empresa_get, numero_funcionarios_get , cnpj_get, quantidade_dias_get, vendedor_get,endereco_get,cidade_endereco_get, bairro_endereco_get,complemento_get, contato_get, telefone1_get, telefone2_get, observacao_get))
+        conn.commit()
         messagebox.showinfo("Sucesso !" , "A empresa " + nome_empresa_get + " foi cadastrada com sucesso", parent = save_button )
 
 
 
-
+#cancelando cadastro---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def cancelar_cadastro():
-    tela_cadastro.destroy()
-
+    Ask_msg = messagebox.askquestion("CBS", "Tem certeza que deseja cancelar o cadastro ?", parent = tela_cadastro)
+    if Ask_msg == "yes":
+        tela_cadastro.destroy()
+    else:
+        pass
 #Adicionar Colaboradores Botao----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-adicionar_colaboradores = Button(tela_cadastro, text = "Adicionar \n Colaboradores", font = ("Arial", 11), relief = "flat", height = 3, bg = "PaleGreen3", fg = "white", command = adicionar_colaboradores)
+adicionar_colaboradores = Button(tela_cadastro, text = "Adicionar \n Colaboradores", font = ("Courier new", 11), relief = "flat", height = 3, bg = "PaleGreen3", fg = "white", command = adicionar_colaboradores)
 adicionar_colaboradores.place(x = 600 , y = 547)
 
 
@@ -220,4 +233,4 @@ save_button.place(x = 770, y = 547)
 
 
 
-tela_cadastro.mainloop()
+# tela_cadastro.mainloop()
