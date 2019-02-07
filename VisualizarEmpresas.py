@@ -6,7 +6,8 @@ from tkinter import messagebox
 import sqlite3
 import pandas as pd
 
-tela_empresas = Tk()
+# tela_empresas = Tk()
+tela_empresas = Toplevel()
 tela_empresas.geometry("680x370+650+250")
 tela_empresas.title("Empresas Cadastradas")
 tela_empresas.resizable(False, False)
@@ -341,5 +342,5 @@ delete_btt = Button(tela_empresas, text = 'Excluir', font = ("Courier new", 11),
 delete_btt.place(x = 490, y = 5)
 
 
-
-tela_empresas.mainloop()
+tela_empresas = tela_de_inicio()
+# tela_empresas.mainloop()

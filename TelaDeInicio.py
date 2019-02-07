@@ -9,8 +9,6 @@ tela_de_inicio.geometry("900x500+650+250")
 tela_de_inicio.title("Controle de entregas CBS")
 tela_de_inicio.resizable(False, False)
 
-
-
 #Creating Icon
 tela_de_inicio.iconbitmap('Imagens\cbsicon.ico')
 
@@ -23,6 +21,9 @@ logo_label.place(x=0, y=0, relwidth=1.0, relheight=1.0)
 def abrir_cadastro():
     import Cadastro
 
+def empresas_cadastradas():
+    import VisualizarEmpresas
+
 
 #Criando Menu
 menu_principal = Menu(tela_de_inicio)
@@ -31,36 +32,13 @@ tela_de_inicio.config(menu = menu_principal)
 #Menu Cadastro
 menu_cadastro = Menu(menu_principal)
 menu_cadastro.add_command(label = "Novo Cadastro", command= abrir_cadastro)
-menu_cadastro.add_command(label = "Empresas Cadastradas")
+menu_cadastro.add_command(label = "Empresas Cadastradas", command = empresas_cadastradas)
 menu_principal.add_cascade(label = "Cadastro", menu = menu_cadastro)
 
 #Menu consultar
 menu_consultar = Menu(menu_principal)
 menu_consultar.add_command(label = "Cestas Colaboradores")
 menu_principal.add_cascade(label = "Consultar", menu = menu_consultar)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 tela_de_inicio.mainloop()

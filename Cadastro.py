@@ -232,5 +232,5 @@ save_button.place(x = 770, y = 547)
 
 
 
-
+tela_cadastro = tela_de_inicio()
 # tela_cadastro.mainloop()
