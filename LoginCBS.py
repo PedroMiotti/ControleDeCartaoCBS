@@ -42,9 +42,9 @@ def log():
         tela_login.destroy()
         import TelaDeInicio
 
-    elif usuario_str.get() == "cbsmotorista" and senha_pws.get() == "cbsmotorista":
+    elif usuario_str.get() == "cbsoperador" and senha_pws.get() == "cbsoperador":
         tela_login.destroy()
-        pass
+        import motorista
     #Se não mostre essa mensagem
     else:
         messagebox.showerror('Ops !', "Usuário não encontrado " , parent= tela_login)

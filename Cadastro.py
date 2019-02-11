@@ -117,7 +117,7 @@ def cidades_sp():
 cidade_endereco = Label(tela_cadastro, text = ("Cidade : *"), font=("Courier new", 15))
 cidade_endereco.place(x = 400, y = 190)
 
-cidade_endereco_combobox = ttk.Combobox(tela_cadastro,font=('arial', 14), width = 18, textvariable = cidade_endereco_str)
+cidade_endereco_combobox = ttk.Combobox(tela_cadastro,font=('Courier new', 14), width = 18, textvariable = cidade_endereco_str)
 cidade_endereco_combobox.place(x = 400, y = 230)
 
 cidade_endereco_combobox['values'] = cidades_sp()
@@ -232,5 +232,5 @@ save_button.place(x = 770, y = 547)
 
 
 
-tela_cadastro = tela_de_inicio()
+tela_cadastro = Root()
 # tela_cadastro.mainloop()

@@ -1,5 +1,7 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
+
 import sqlite3
 
 
@@ -24,6 +26,15 @@ def abrir_cadastro():
 def empresas_cadastradas():
     import VisualizarEmpresas
 
+def sair():
+    msg = messagebox.askquestion('CBS', "Tem certeza que deseja sair do sistema ?", parent = tela_de_inicio)
+
+    if msg == "yes":
+        tela_de_inicio.destroy()
+        import LoginCBS
+
+    else:
+        pass
 
 #Criando Menu
 menu_principal = Menu(tela_de_inicio)
@@ -35,10 +46,9 @@ menu_cadastro.add_command(label = "Novo Cadastro", command= abrir_cadastro)
 menu_cadastro.add_command(label = "Empresas Cadastradas", command = empresas_cadastradas)
 menu_principal.add_cascade(label = "Cadastro", menu = menu_cadastro)
 
-#Menu consultar
-menu_consultar = Menu(menu_principal)
-menu_consultar.add_command(label = "Cestas Colaboradores")
-menu_principal.add_cascade(label = "Consultar", menu = menu_consultar)
+# Menu Sair
+menu_sair = Menu(menu_principal)
+menu_principal.add_command(label = "Sair", command = sair)
 
 
 tela_de_inicio.mainloop()

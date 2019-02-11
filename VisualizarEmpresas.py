@@ -321,16 +321,67 @@ def apagar_cadastro():
     msg_delete = messagebox.askquestion('CBS', "Tem certeza que deseja excluir essa empresa ?", parent = tela_empresas)
     if msg_delete == "yes":
         c.execute('DELETE FROM cadastro WHERE nomeempresa = ?', (empresas_tree.set(apagar_selection, '#1'),))
+        c.execute('''DROP TABLE IF EXISTS {}'''.format(empresas_tree.set(apagar_selection, '#1')))
         conn.commit()
         empresas_tree.delete(apagar_selection)
-
-        # c.execute("DROP TABLE IF EXISTS {}".format((empresas_tree.set(apagar_selection, '#1'))))
-        # conn.commit()
 
         messagebox.showinfo("Sucesso", "Excluido com sucesso", parent = tela_empresas)
 
     else:
         pass
+
+
+
+#Defining the consultar functions
+def consultar_colaboradores():
+    tela_consulta = Toplevel()
+    tela_consulta.geometry('680x370+650+250')
+    tela_consulta.title("Consultar Colaboradores")
+
+    #Creating Icon
+    tela_consulta.iconbitmap('Imagens\cbsicon.ico')
+
+
+
+    #Treeview
+    tree_funcionarios = ttk.Treeview(tela_consulta, show ="headings", height= 14)
+    tree_funcionarios.place(x = 10, y = 55)
+    tree_funcionarios["columns"] = ("one", "two")
+    tree_funcionarios.column("one", width = 450)
+    tree_funcionarios.column("two", width = 210)
+    tree_funcionarios.heading("one", text = "Nome", anchor = "w")
+    tree_funcionarios.heading("two", text = "Cestas Disponiveis", anchor = "w")
+
+
+
+
+    #populating Treeview
+    selection_funcionarios = empresas_tree.selection()
+
+    for selection_funcionarios in empresas_tree.selection():
+        c.execute("SELECT nome, cesta FROM {} ORDER  BY nome ASC".format((empresas_tree.set(selection_funcionarios, '#1'))))
+        row = c.fetchall()
+        conn.commit()
+
+
+        for row in row:
+            tree_funcionarios.insert("", END, values = row)
+    #defining functions
+
+
+
+    exportar = Button(tela_consulta, text = 'Exportar', font = ("Courier new", 11), relief = "flat", height = 2,width = 9 , bg = "PaleGreen3", fg = "white")
+    exportar.place(x = 585, y = 5)
+
+    recarregar = Button(tela_consulta, text = ' Recarregar \n Todos', font = ("Courier new", 11), relief = "flat", height = 2,width = 9 , bg = "light sky blue", fg = "white")
+    recarregar.place(x = 490, y = 5)
+
+    editar_funcionario = Button(tela_consulta, text = 'Editar', font = ("Courier new", 11), relief = "flat", height = 2, width = 9 , bg = "tomato", fg = "white" )
+    editar_funcionario.place(x = 395, y = 5)
+
+
+
+
 
 
 
@@ -341,6 +392,9 @@ editar_btt.place(x = 585, y = 5)
 delete_btt = Button(tela_empresas, text = 'Excluir', font = ("Courier new", 11), relief = "flat", height = 2,width = 9 , bg = "tomato", fg = "white", command = apagar_cadastro )
 delete_btt.place(x = 490, y = 5)
 
+consultar_btt = Button(tela_empresas, text = 'Consultar', font = ("Courier new", 11), relief = "flat", height = 2, width = 9 , bg = "light sky blue", fg = "white" , command = consultar_colaboradores)
+consultar_btt.place(x = 395, y = 5)
 
-tela_empresas = tela_de_inicio()
+
+tela_empresas = Root()
 # tela_empresas.mainloop()
