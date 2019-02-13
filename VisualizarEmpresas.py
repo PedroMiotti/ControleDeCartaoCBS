@@ -370,6 +370,7 @@ def consultar_colaboradores():
 
 
 
+
     exportar = Button(tela_consulta, text = 'Exportar', font = ("Courier new", 11), relief = "flat", height = 2,width = 9 , bg = "PaleGreen3", fg = "white")
     exportar.place(x = 585, y = 5)
 

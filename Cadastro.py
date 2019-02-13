@@ -159,7 +159,7 @@ def adicionar_colaboradores():
         # #reading Excel
         read_excel = pd.read_excel(getting_excelfile)
 
-        c.execute('''CREATE TABLE {}(nome, cod ,cesta)'''.format(nome_empresa_get))
+        c.execute('''CREATE TABLE {}(nome TEXT, cod INTEGER ,cesta INTEGER)'''.format(nome_empresa_get))
         conn.commit()
 
         for index, row in read_excel.iterrows():

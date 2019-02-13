@@ -55,12 +55,4 @@ entrar_btt.place(x = 330, y = 185)
 
 
 
-
-
-
-
-
-
-
-
 tela_login.mainloop()

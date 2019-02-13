@@ -75,18 +75,65 @@ def escolher_colaborador():
         pick_empresa.place(x = 60, y = 120)
 
         def consultar_cartao():
-            consultar_wind = Tk()
-            consultar_wind.geometry('380x180+650+250')
-            consultar_wind.title("Consultar Cartao")
-            #Creating Icon
-            consultar_wind.iconbitmap('Imagens\cbsicon.ico')
-#Stoped here +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            fetching_data = ("SELECT nome FROM {} WHERE cod = ?".format(nome_empresadb_str.get()))
-            c.execute(fetching_data, (pick_empresa_str.get()))
-            get_data = c.fetchall()
 
-            print(get_data)
+            fetching_nome = ("SELECT nome FROM {} WHERE cod = ?".format(nome_empresadb_str.get()))
+            c.execute(fetching_nome, (pick_empresa_str.get()))
+            get_data1 = c.fetchone()[0]
+
+            fetching_cesta = ("SELECT cesta FROM {} WHERE cod = ?".format(nome_empresadb_str.get()))
+            c.execute(fetching_cesta, (pick_empresa_str.get()))
+            get_data2 = c.fetchone()[0]
             conn.commit()
+            cestas = int(get_data2)
+
+            if cestas > 0:
+                print('sucess')
+                consultar_wind = Toplevel()
+                consultar_wind.geometry('380x180+650+250')
+                consultar_wind.title("Consultar Cartao")
+                #Creating Icon
+                consultar_wind.iconbitmap('Imagens\cbsicon.ico')
+
+
+                nome_funcionario_lbl = Label(consultar_wind, text = "Colaborador :" , font=('Courier new', 15))
+                nome_funcionario_lbl.place(x = 0 , y = 20)
+
+                nome_funcionario_str = StringVar()
+                nome_funcionario = Label(consultar_wind , font=('Courier new', 14), textvariable = nome_funcionario_str)
+                nome_funcionario_str.set(get_data1)
+                nome_funcionario.place(x = 180 , y = 20)
+
+                qtd_cestas_lbl = Label(consultar_wind, text = "Cestas \n disponiveis :" , font=('Courier new', 15))
+                qtd_cestas_lbl.place(x = 0 , y = 60)
+
+                qtd_cestas_str = StringVar()
+                qtd_cestas = Label(consultar_wind , font=('Courier new',20), textvariable = qtd_cestas_str)
+                qtd_cestas_str.set(get_data2)
+                qtd_cestas.place(x = 180 , y = 77)
+
+
+                def finalizar():
+                    cesta_zerada = 0
+                    update_cestas = ("UPDATE {} SET cesta = ? WHERE nome = ?".format(nome_empresadb_str.get()))
+                    c.execute(update_cestas, (cesta_zerada, get_data1))
+                    messagebox.showinfo("CBS", "Cartao zerado com sucesso !", parent = qtd_cestas)
+                    consultar_wind.destroy()
+
+                def cancelar():
+                    consultar_wind.destroy()
+
+
+
+                fin_btt = Button(consultar_wind, text = 'Zerar \ncartao', font=('Courier new',11) , width = 8, relief = 'flat', bg = "Tomato", fg= "white", command = finalizar)
+                fin_btt.place(x = 293 , y = 129)
+
+                can_btt = Button(consultar_wind, text = 'Cancelar \noperacao', font=('Courier new',11) , width = 8, relief = 'flat', bg = "Orange2", fg= "white", command = cancelar)
+                can_btt.place(x = 205 , y = 129)
+
+            else:
+                messagebox.showerror("Ops !", get_data1 + ' esta com o cartao zerado ! ' , parent = tela_colaborador)
+
+
 
 
 
