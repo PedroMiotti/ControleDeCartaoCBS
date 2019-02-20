@@ -342,6 +342,18 @@ def consultar_colaboradores():
     tela_consulta.iconbitmap('Imagens\cbsicon.ico')
 
 
+    #Empresa Label
+    nome_empresa = Label(tela_consulta, text='Empresa: ', font=('courier new', 13))
+    nome_empresa.place(x = 0 , y = 10)
+
+    selection_funcionarios = empresas_tree.selection()
+    empresa1 = empresas_tree.set(selection_funcionarios,"#1")
+
+    nome_empresa_get_str = StringVar()
+    nome_empresa_get = Label(tela_consulta, font=('courier new', 13), textvariable = nome_empresa_get_str)
+    nome_empresa_get_str.set(empresa1)
+    nome_empresa_get.place(x = 90 , y = 10)
+
 
     #Treeview
     tree_funcionarios = ttk.Treeview(tela_consulta, show ="headings", height= 14)
@@ -356,7 +368,7 @@ def consultar_colaboradores():
 
 
     #populating Treeview
-    selection_funcionarios = empresas_tree.selection()
+    # selection_funcionarios = empresas_tree.selection()
 
     for selection_funcionarios in empresas_tree.selection():
         c.execute("SELECT nome, cesta FROM {} ORDER  BY nome ASC".format((empresas_tree.set(selection_funcionarios, '#1'))))
@@ -368,16 +380,104 @@ def consultar_colaboradores():
             tree_funcionarios.insert("", END, values = row)
     #defining functions
 
+    def editar_func():
 
+        #selecionando data
+        selection_funcionarios = tree_funcionarios.selection()
+        for selection_funcionarios in tree_funcionarios.selection():
+            sql = c.execute( "SELECT * FROM {} WHERE nome=? ".format(nome_empresa_get_str.get()), (tree_funcionarios.set(selection_funcionarios, '#1'),))
+            for raw in sql:
+                nome = raw[0]
+                cesta = raw[2]
+
+
+
+        editar_win = Toplevel()
+        editar_win.geometry('380x200+650+250')
+        editar_win.title("Editar")
+
+        #Creating Icon
+        editar_win.iconbitmap('Imagens\cbsicon.ico')
+
+        name_edit_lbl = Label(editar_win, text=('Nome :'), font=('courier new', 14) )
+        name_edit_lbl.place(x= 0, y = 50)
+
+        name_edit = Entry(editar_win, font=('courier new', 14), relief = 'flat')
+        name_edit.insert(END, str(nome))
+        name_edit.place(x= 80, y = 50)
+
+        cesta_edit_lbl = Label(editar_win, text=('Cesta :'), font=('courier new', 14) )
+        cesta_edit_lbl.place(x= 0, y = 100)
+
+        cesta_edit = Entry(editar_win, font=('courier new', 14), relief = 'flat', width = 5)
+        cesta_edit.insert(END, str(cesta))
+        cesta_edit.place(x= 80, y = 100)
+
+        def salvar_func():
+            name_edit_get = name_edit.get()
+            cesta_edit_get = cesta_edit.get()
+
+
+            txtupdate = tree_funcionarios.selection()
+            for txtupdate in tree_funcionarios.selection():
+                upd_data = c.execute("UPDATE {} SET nome = ?, cesta = ? WHERE nome = ?".format(nome_empresa_get_str.get()),(name_edit_get, cesta_edit_get, tree_funcionarios.set(txtupdate, '#1'),))
+                conn.commit()
+            messagebox.showinfo('Sucesso', "Atualizado com sucesso " , parent= editar_win)
+
+            tree_funcionarios.delete(*tree_funcionarios.get_children())
+
+            selection_funcionarios = tree_funcionarios.selection()
+            for selection_funcionarios in empresas_tree.selection():
+                c.execute("SELECT nome, cesta FROM {} ORDER  BY nome ASC".format((empresas_tree.set(selection_funcionarios, '#1'))))
+                row = c.fetchall()
+                conn.commit()
+
+                for row in row:
+                    tree_funcionarios.insert("", END, values = row)
+
+            editar_win.destroy()
+
+
+
+        def cancelar_func():
+            editar_win.destroy()
+
+        save_btt = Button(editar_win, text='Salvar', font = ("Courier new", 11), relief = "flat", height = 2,width = 9 , bg = "PaleGreen3", fg = "white", command = salvar_func)
+        save_btt.place(x = 285, y=150)
+
+        cancelar_btt = Button(editar_win, text='Cancelar', font = ("Courier new", 11), relief = "flat", height = 2,width = 9 , bg = "Tomato", fg = "white", command = cancelar_func)
+        cancelar_btt.place(x = 189, y=150)
+
+
+    def recarregar_cartao():
+        cestas_update = 1
+
+        msg = messagebox.askquestion("CBS", "Tem certeza que deseja recarregar todos os cartoes dessa empresa ? ", parent = tela_consulta)
+        if msg == 'yes':
+            c.execute('UPDATE {} SET cesta=?'.format(nome_empresa_get_str.get()),(cestas_update,))
+            conn.commit()
+
+            tree_funcionarios.delete(*tree_funcionarios.get_children())
+
+            selection_funcionarios = tree_funcionarios.selection()
+            for selection_funcionarios in empresas_tree.selection():
+                c.execute("SELECT nome, cesta FROM {} ORDER  BY nome ASC".format((empresas_tree.set(selection_funcionarios, '#1'))))
+                row = c.fetchall()
+                conn.commit()
+
+                for row in row:
+                    tree_funcionarios.insert("", END, values = row)
+        else:
+            pass
 
 
     exportar = Button(tela_consulta, text = 'Exportar', font = ("Courier new", 11), relief = "flat", height = 2,width = 9 , bg = "PaleGreen3", fg = "white")
     exportar.place(x = 585, y = 5)
 
-    recarregar = Button(tela_consulta, text = ' Recarregar \n Todos', font = ("Courier new", 11), relief = "flat", height = 2,width = 9 , bg = "light sky blue", fg = "white")
+    recarregar = Button(tela_consulta, text = ' Recarregar \n Todos', font = ("Courier new", 11), relief = "flat", height = 2,width = 9 , bg = "light sky blue", fg = "white", command = recarregar_cartao)
     recarregar.place(x = 490, y = 5)
 
-    editar_funcionario = Button(tela_consulta, text = 'Editar', font = ("Courier new", 11), relief = "flat", height = 2, width = 9 , bg = "tomato", fg = "white" )
+    editar_funcionario = Button(tela_consulta, text = 'Editar', font = ("Courier new", 11), relief = "flat", height = 2, width = 9 , bg = "tomato", fg = "white" , command = editar_func)
     editar_funcionario.place(x = 395, y = 5)
 
 
@@ -395,7 +495,3 @@ delete_btt.place(x = 490, y = 5)
 
 consultar_btt = Button(tela_empresas, text = 'Consultar', font = ("Courier new", 11), relief = "flat", height = 2, width = 9 , bg = "light sky blue", fg = "white" , command = consultar_colaboradores)
 consultar_btt.place(x = 395, y = 5)
-
-
-tela_empresas = Root()
-# tela_empresas.mainloop()

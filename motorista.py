@@ -87,7 +87,6 @@ def escolher_colaborador():
             cestas = int(get_data2)
 
             if cestas > 0:
-                print('sucess')
                 consultar_wind = Toplevel()
                 consultar_wind.geometry('380x180+650+250')
                 consultar_wind.title("Consultar Cartao")
@@ -117,6 +116,7 @@ def escolher_colaborador():
                     update_cestas = ("UPDATE {} SET cesta = ? WHERE nome = ?".format(nome_empresadb_str.get()))
                     c.execute(update_cestas, (cesta_zerada, get_data1))
                     messagebox.showinfo("CBS", "Cartao zerado com sucesso !", parent = qtd_cestas)
+                    pick_empresa.delete( 0, END)
                     consultar_wind.destroy()
 
                 def cancelar():
@@ -154,6 +154,8 @@ def sair_motorista():
     if msg == "yes":
         tela_motorista.destroy()
         import LoginCBS
+
+
 
     else:
         pass

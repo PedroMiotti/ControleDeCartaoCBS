@@ -229,8 +229,4 @@ trash_icon = PhotoImage(file = "Imagens\cancelar_icon.png")
 save_button = Button(tela_cadastro, image = trash_icon, relief = "flat", command = cancelar_cadastro)
 save_button.place(x = 770, y = 547)
 
-
-
-
-tela_cadastro = Root()
-# tela_cadastro.mainloop()
+# tela_cadastro = tela_de_inicio()
